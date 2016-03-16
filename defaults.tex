@@ -1,11 +1,7 @@
-% Packages to import so that pgfplots can be used. xifthen is
-% imported to power the logic I've added to ensure that
-% \figurewidth will always have a useful value. This is necessary
-% for use with my save_tex() command.
+% Packages to import so that pgfplots can be used.
 \usepackage{pgfplots}
 \pgfplotsset{compat=newest}
 \usepackage[utf8]{inputenc}
-\usepackage{xifthen}
 
 % Create command to specify size of a plot created using
 % my save_tex() command. \setfig{} sets the size of the
@@ -13,22 +9,16 @@
 % automatically used when starting a figure environment,
 % setting \figurewidth to a default value of \texwidth.
 \newcommand{\resetfig}{
-\ifcsname figurewidth\endcsname
-  \ifthenelse{\lengthtest{\figurewidth > 0.0pt}}{}{
-    \setlength\figurewidth{\textwidth}
-  }
-\else
+\ifcsname figurewidth\endcsname\else
   \newlength\figurewidth
-  \setlength\figurewidth{\textwidth}
 \fi
+\setlength\figurewidth{\textwidth}
 }
 \newcommand{\setfig}[1]{
-\ifcsname figurewidth\endcsname
-  \setlength\figurewidth{#1}
-\else
-  \newlength\figurewidth
+\ifcsname figurewidth\endcsname\else
   \setlength\figurewidth{#1}
 \fi
+\setlength\figurewidth{#1}
 }
 
 % Set figure environments to always center the image and to
