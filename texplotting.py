@@ -29,8 +29,7 @@ def texsave(filename,
     .. code-block:: latex
        \begin{figure}
          \label{fig:example}
-         \setfig{<desired width of plot>}
-         \input{<path to file containing plot>}
+         \includeplot[<width>]{<path to file containing plot>}
          \caption{Congratulations! You've added a lovely pgfplot to your
                   \LaTeX document.}
        \end{figure}

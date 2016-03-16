@@ -1,4 +1,0 @@
-#TeXPlots
-This is a collection of helper functions for producing good plots to go
-into LaTeX files. There is also a latex file to import which imports the
-necessary plotting libraries and defines some useful macros.
