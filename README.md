@@ -17,7 +17,7 @@ texsave('example-plot')
 This will create both a pgfplot, in `example-plot.tex`, and a PDF,
 in `example-plot.pdf`, version of the graph.
 To add this plot to a LaTeX document, place a copy of `defaults.tex` in
-the directory of said document and put `include{defaults}` in the preamble.
+the directory of said document and put `\include{defaults}` in the preamble.
 The following block would then import the figure:
 
 ```latex
