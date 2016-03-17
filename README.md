@@ -23,9 +23,19 @@ The following block would then import the figure:
 ```latex
 \begin{figure}
     \label{fig:example}
-    % Width defaults to \textwidth
-    \includeplot[0.8\textwidth]{path/to/example-plot}
+    \includeplot[0.8\textwidth][1.5cm][1.5cm]{path/to/example-plot}
     \caption{It's as simple as that!}
 \end{figure}
 ```
 
+The syntax for `includeplot{}` is
+```latex
+\includeplot[<figure width>][<horizontal spacing>][<vertical spacing>]{path/to/example-plot}
+```
+where 
+
+-`<figure width>` is the total width of the figure, defaulting to `\textwidth`
+-`<horizontal spacing>` is the horizontal separation between plots if there
+ is more than one subplot present, defaulting to `1cm`
+-`<horizontal spacing>` is the vertical separation between plots if there
+ is more than one subplot present, defaulting to `1cm`.

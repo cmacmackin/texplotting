@@ -2,15 +2,26 @@
 \usepackage{pgfplots}
 \pgfplotsset{compat=newest}
 \usepackage[utf8]{inputenc}
+\usepgfplotslibrary{groupplots}
+\usetikzlibrary{pgfplots.groupplots}
 
 % Create command to import and specify size of a plot created
 % using my save_tex() command.
-\newcommand{\includeplot}[2][\textwidth]{
+\usepackage{xparse}
+\DeclareDocumentCommand{\includeplot}{O{\texwidth} O{1cm} O{1cm} m}{
 \ifcsname figurewidth\endcsname\else
   \newlength\figurewidth
 \fi
 \setlength\figurewidth{#1}
-\input{#2}
+\ifcsname xsepwidth\endcsname\else
+  \newlength\xsepwidth
+\fi
+\setlength\xsepwidth{#2}
+\ifcsname ysepwidth\endcsname\else
+  \newlength\ysepwidth
+\fi
+\setlength\ysepwidth{#3}
+\input{#4}
 }
 
 % Set figure environments to always center the image

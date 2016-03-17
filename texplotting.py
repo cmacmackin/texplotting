@@ -1,5 +1,10 @@
 from matplotlib2tikz import save as tikz_save
 import matplotlib as mpl
+import re
+
+GROUP_RE = re.compile(r'(group\s+style\s*=\s*\{(?:[^}]+,)*?''\s*group\s+'
+                      r'size\s*=\s*\d+\s+by\s+\d+(?:,[^}]+)*?)\}')
+GROUP_ADD = r'\1, horizontal sep=\xsepwidth, vertical sep=\ysepwidth}'
 
 def texsave(filename,
          figure='gcf',
@@ -7,10 +12,13 @@ def texsave(filename,
          textsize=10.0,
          tex_relative_path_to_data=None,
          strict=True,
+         strict_labels=True,
          draw_rectangles=False,
          wrap=True,
          scale=False,
          times_sci_notation=True,
+         exp_cutoff = (-4,4),
+         precision = 3,
          extra=set([]),
          show_info=False
          ):
@@ -58,6 +66,11 @@ def texsave(filename,
                    exactly as in the matplotlib plot, or if TikZ/PGFPlots
                    can decide where to put the ticks.
     :type strict: bool
+    :param strict_labels: If ``strict == True``, whether to strictly adhere
+                          to matplotlib's labels or whether to have pgfplot
+                          create them itself, with the style modified according
+                          to the specifications given in other arguments.
+    :type strict_labels: bool
     :param draw_rectangles: Whether or not to draw Rectangle objects.
                             You normally don't want that as legend, axes, and
                             other entities which are natively taken care of by
@@ -79,25 +92,62 @@ def texsave(filename,
                                ``\cdot`` in any scientific notation on the
                                tick labels.
     :type scale: bool
+    :param exp_cutoff: The lower and upper bounds for the exponent of a number
+                       beyond which scientific notation is used. If the number
+                       is within these bounds (inclusive) then a floating point
+                       number is used.
+    :type exp_cutoff: (int, int)
     :param extra: Extra axis options to be passed (as a set) to pgfplots.
                   Default is ``None``.
-    
+    :param precision: The number of decimal places to show.
+    :type precision: int
     :type extra: a set of strings for the pfgplots axes.
     :returns: None
     
     '''
     extra_statements = set(extra)
-    if not scale: extra_statements.add('scaled y ticks = false')
-    if times_sci_notation:
-        extra_statements.add(r'yticklabel={'
+    if not scale or strict_labels:
+        extra_statements.add('scaled y ticks = false')
+        extra_statements.add('scaled x ticks = false')
+    if times_sci_notation and not strict_labels:
+        extra_statements.add(r'xticklabel={'
                                r'\pgfmathprintnumber['
-                                 r'sci generic={'
+                                 r'relative*={%i},relative style={std=%i:%i},'
+                                  r'sci generic={'
                                    r'mantissa sep=\times,'
                                    r'exponent={10^{##1}}'
-                                 r'}'
+                                 r'},'
+                                 r'precision={%i}'
                                r']{\tick}'
-                             r'}')
-    
+                             r'}' % (exp_cutoff[0], exp_cutoff[0],
+                                     exp_cutoff[1], precision))
+        extra_statements.add(r'yticklabel={'
+                               r'\pgfmathprintnumber['
+                                 r'relative*={%i},relative style={std=%i:%i},'
+                                  r'sci generic={'
+                                   r'mantissa sep=\times,'
+                                   r'exponent={10^{##1}}'
+                                 r'},'
+                                 r'precision={%i}'
+                               r']{\tick}'
+                             r'}' % (exp_cutoff[0], exp_cutoff[0],
+                                     exp_cutoff[1], precision))
+    elif not strict_labels:
+        extra_statements.add(r'xticklabel={'
+                               r'\pgfmathprintnumber['
+                                 r'relative*={%i},relative style={std=%i:%i},'
+                                 r'precision={%i}'
+                               r']{\tick}'
+                             r'}' % (exp_cutoff[0], exp_cutoff[0],
+                                     exp_cutoff[1], precision))
+        extra_statements.add(r'yticklabel={'
+                               r'\pgfmathprintnumber['
+                                 r'relative*={%i},relative style={std=%i:%i},'
+                                 r'precision={%i}'
+                               r']{\tick}'
+                             r'}' % (exp_cutoff[0], exp_cutoff[0],
+                                     exp_cutoff[1], precision))
+
     # Produce a pgfplot figure in a TeX file
     texpath = filename + '.tex'
     tikz_save(texpath, figure=figure, figurewidth='\\figurewidth',
@@ -105,7 +155,12 @@ def texsave(filename,
               tex_relative_path_to_data=tex_relative_path_to_data,
               strict=strict, draw_rectangles=draw_rectangles, wrap=wrap,
               show_info=show_info, extra=extra_statements)
-    
+    with open(texpath, 'r') as reader:
+        src = reader.read()
+    src = GROUP_RE.sub(GROUP_ADD,src)
+    with open(texpath, 'w') as writer:
+        writer.write(src)
+
     # Create a standalone PDF figure for immediate analysis
     if figure == 'gcf': 
         figure = mpl.pyplot.gcf()
