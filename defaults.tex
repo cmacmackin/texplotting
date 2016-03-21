@@ -1,27 +1,12 @@
 % Packages to import so that pgfplots can be used.
-\usepackage{pgfplots}
-\pgfplotsset{compat=newest}
-\usepackage[utf8]{inputenc}
-\usepgfplotslibrary{groupplots}
-\usetikzlibrary{pgfplots.groupplots}
+\usepackage{pgf}
+\usepackage{adjustbox}
 
 % Create command to import and specify size of a plot created
 % using my save_tex() command.
-\usepackage{xparse}
-\DeclareDocumentCommand{\includeplot}{O{\texwidth} O{1cm} O{1cm} m}{
-\ifcsname figurewidth\endcsname\else
-  \newlength\figurewidth
-\fi
-\setlength\figurewidth{#1}
-\ifcsname xsepwidth\endcsname\else
-  \newlength\xsepwidth
-\fi
-\setlength\xsepwidth{#2}
-\ifcsname ysepwidth\endcsname\else
-  \newlength\ysepwidth
-\fi
-\setlength\ysepwidth{#3}
-\input{#4}
+\newcommand{\includeplot}[2][1.0]{
+  \def\plotscale{#1}
+  \scalebox{\plotscale}{\input{#2}}
 }
 
 % Set figure environments to always center the image

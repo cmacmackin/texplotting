@@ -1,3 +1,5 @@
 *~
 *.pyc
 *#
+venv/
+texplotting.egg-info/
