@@ -35,9 +35,12 @@ The following block would then import the figure:
 
 The syntax for `includeplot{}` is
 ```latex
-\includeplot[<scale>]{path/to/example-plot}
+\includeplot[<scale>][<dir>]{<dir>/example-plot}
 ```
-where `<scale>` is the ammount by which to scale the plot size. The
+where `<scale>` is the ammount by which to scale the plot size and `<dir>`
+is the directory containing the plot. It only needs to be specified as an
+optional argument for plots where the PGF imports a PNG file (such as a 2D
+colourmap). It defaults to the current directory. The
 size of the text in the plot can be adjusted with the use of the appropriate
 macro (e.g. `\small`, `\Large`, etc.) prior to the `\includeplot` statement.
 If you want to adjust the size of individual text elements in the plot then

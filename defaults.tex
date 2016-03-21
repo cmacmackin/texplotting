@@ -4,9 +4,11 @@
 
 % Create command to import and specify size of a plot created
 % using my save_tex() command.
-\newcommand{\includeplot}[2][1.0]{
+\usepackage{xparse}
+\DeclareDocumentCommand{\includeplot}{O{1.0} O{.} m}{
   \def\plotscale{#1}
-  \scalebox{\plotscale}{\input{#2}}
+  \def\plotdirectory{#2}
+  \scalebox{\plotscale}{\input{#3}}
 }
 
 % Set figure environments to always center the image

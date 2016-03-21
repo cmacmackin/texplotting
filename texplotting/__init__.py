@@ -1,6 +1,7 @@
 from matplotlib import rc
 import matplotlib as mpl
 import re
+import os.path
 
 rc('text', usetex=True)
 rc('font', **{'family':'serif', 'serif':[], 'sans-serif':[],
@@ -10,14 +11,16 @@ rc('legend', **{'fontsize':'medium', 'frameon':False})
 
 SCALEVAR = 'plotscale'
 FONTVAR = 'plotfontsize'
+DIRVAR = 'plotdirectory'
 PT_RE = re.compile(r'\\(pgfsetlinewidth|pgfsetdash\{\})\s*\{\s*([0-9.]+)\s*pt\s*\}')
 FONT_RE = re.compile(r'\\fontsize\s*\{\s*([0-9.]+)\s*\}\s*\{\s*([0-9.]+)\s*\}')
+PNG_RE = re.compile(r'\\(pgfimage\s*\[.*\])\s*\{(.*png)\}')
 PT_SUB = r'\pgfmathparse{{\2/\{}}}\\\1{{\pgfmathresult pt}}'.format(SCALEVAR)
 FONT_SUB = r'\\fontsize{{\{0}}}{{1.2\{0}}}'.format(FONTVAR)
+PNG_SUB = r'\\\1{{\\{0}{1}\2}}'.format(DIRVAR, os.sep)
 FONTSET = r'''
 \makeatletter
 \pgfmathparse{{\f@size/\{1}}}
-%\FPdiv\{0}num\f@size\{1}
 \makeatother
 \ifcsname {0}\endcsname\else
 \newlength\{0}
@@ -57,6 +60,7 @@ def savetex(filename, figure='gcf'):
         pgf += reader.read()
     pgf = PT_RE.sub(PT_SUB,pgf)
     pgf = FONT_RE.sub(FONT_SUB,pgf)
+    pgf = PNG_RE.sub(PNG_SUB,pgf)
     with open(texpath,'w') as writer:
         writer.write(pgf) 
 
