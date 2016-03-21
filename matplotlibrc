@@ -1,5 +1,0 @@
-text.usetex: True
-legend.fontsize: medium
-legend.frameon: False
-pgf.texsystem: pdflatex
-pgf.rcfonts: False
