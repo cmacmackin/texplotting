@@ -27,9 +27,9 @@ The following block would then import the figure:
 
 ```latex
 \begin{figure}
-    \label{fig:example}
     \includeplot[0.8]{path/to/example-plot}
     \caption{It's as simple as that!}
+    \label{fig:example}
 \end{figure}
 ```
 
